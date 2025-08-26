@@ -1,0 +1,87 @@
+/* Custom CSS for better desktop ChatGPT experience */
+
+/* Improve scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.8);
+}
+
+/* Better focus indicators for keyboard navigation */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+    outline: 2px solid #0ea5e9 !important;
+    outline-offset: 2px !important;
+}
+
+/* Enhance code blocks */
+pre {
+    border-radius: 8px !important;
+}
+
+/* Improve button hover states */
+button:hover {
+    transition: all 0.2s ease !important;
+}
+
+/* Better spacing for desktop */
+.conversation {
+    max-width: none !important;
+}
+
+/* Enhance message input area */
+textarea[placeholder*="message"] {
+    border-radius: 12px !important;
+    transition: border-color 0.2s ease !important;
+}
+
+textarea[placeholder*="message"]:focus {
+    border-color: #0ea5e9 !important;
+}
+
+/* Desktop-optimized chat interface */
+@media (min-width: 1024px) {
+    .main-content {
+        max-width: 80% !important;
+        margin: 0 auto !important;
+    }
+}
+
+/* Improve sidebar on desktop */
+.sidebar {
+    border-right: 1px solid rgba(128, 128, 128, 0.2) !important;
+}
+
+/* Better loading states */
+.loading {
+    animation: pulse 2s infinite !important;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Enhance tooltips */
+[data-tooltip] {
+    position: relative;
+}
+
+/* Better modal styling */
+.modal {
+    backdrop-filter: blur(4px) !important;
+}

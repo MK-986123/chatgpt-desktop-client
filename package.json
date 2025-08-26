@@ -1,18 +1,69 @@
 {
   "name": "chatgpt-desktop-client",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "src/main.js",
   "type": "module",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --linux snap"
+    "dist": "electron-builder --linux",
+    "dist:snap": "electron-builder --linux snap",
+    "dist:appimage": "electron-builder --linux AppImage",
+    "dist:deb": "electron-builder --linux deb"
   },
   "build": {
-    "appId": "com.example.chatgptdesktopclient",
+    "appId": "com.chatgpt.desktop.client",
+    "productName": "ChatGPT Desktop",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
     "linux": {
-      "target": "snap",
+      "target": [
+        {
+          "target": "snap",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "AppImage",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64", "arm64"]
+        }
+      ],
       "icon": "assets/icon.png",
-      "category": "Utility"
+      "category": "Network",
+      "description": "Desktop application for ChatGPT with enhanced features",
+      "desktop": {
+        "Name": "ChatGPT Desktop",
+        "Comment": "AI-powered desktop chat application",
+        "Keywords": "ChatGPT;AI;Chat;OpenAI;Assistant",
+        "StartupWMClass": "chatgpt-desktop-client"
+      }
+    },
+    "snap": {
+      "summary": "Desktop application for ChatGPT",
+      "description": "A modern desktop client for ChatGPT with enhanced features including conversation export, keyboard shortcuts, and improved OAuth support.",
+      "grade": "stable",
+      "confinement": "strict",
+      "plugs": [
+        "default",
+        "browser-support",
+        "network",
+        "network-bind",
+        "desktop",
+        "desktop-legacy",
+        "x11",
+        "wayland",
+        "opengl",
+        "audio-playback",
+        "home"
+      ]
     }
   },
   "repository": "https://github.com/xanmoy/chatgpt-desktop-client.git",
@@ -25,13 +76,12 @@
   ],
   "author": "Tanmoy Ganguly",
   "license": "ISC",
-  "description": "A simple and efficient desktop client for ChatGPT.",
+  "description": "A modern, feature-rich desktop client for ChatGPT with enhanced OAuth support, conversation export, keyboard shortcuts, system tray integration, and optimized Linux compatibility for Ubuntu 24.04/25.04.",
   "devDependencies": {
-    "electron": "^33.2.0",
+    "electron": "^37.3.1",
     "electron-builder": "^25.1.8"
   },
   "dependencies": {
-    "electron-context-menu": "^4.0.4",
-    "electron-oauth2": "^3.0.0"
+    "electron-context-menu": "^4.0.4"
   }
 }

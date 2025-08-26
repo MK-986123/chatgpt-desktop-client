@@ -1,17 +1,19 @@
-name: chatgpt-desktop
-base: core20
-version: '1.0.0'
-summary: Unofficial ChatGPT Desktop Client
+name: chatgpt-desktop-client
+base: core24
+version: '1.0.2'
+summary: Modern ChatGPT Desktop Client
 description: |
-  A simple and efficient desktop client for chatgpt, using Electron to provide a seamless experience.
+  A feature-rich desktop client for ChatGPT with enhanced OAuth support,
+  conversation export, keyboard shortcuts, and improved Linux compatibility.
+  Compatible with Ubuntu 24.04 and 25.04.
 
 grade: stable
 confinement: strict
 
 apps:
-  chatgpt-desktop:
+  chatgpt-desktop-client:
     command: chatgpt-desktop-client
-    extensions: [gnome-3-38]
+    extensions: [gnome]
     plugs:
       - network
       - network-bind
@@ -20,14 +22,29 @@ apps:
       - wayland
       - x11
       - opengl
+      - browser-support
+      - audio-playback
+      - home
 
 parts:
-  chatgpt-desktop:
+  chatgpt-desktop-client:
     plugin: dump
     source: .
+    build-packages:
+      - nodejs
+      - npm
     stage-packages:
       - libnss3
       - libxss1
       - libgtk-3-0
+      - libgconf-2-4
+      - libasound2
+      - libxtst6
+      - libdrm2
+      - libgtk-4-1
+    override-build: |
+      npm install
+      npm run dist:snap
+      cp -r dist/* $SNAPCRAFT_PART_INSTALL/
     after:
       - desktop-gtk3
