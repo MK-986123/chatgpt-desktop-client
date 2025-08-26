@@ -1,15 +1,12 @@
 // Preload script for ChatGPT Desktop Client
 const { contextBridge, ipcRenderer } = require('electron');
-const fs = require('fs');
-const path = require('path');
 
 // Enhanced preload script with useful features
-window.addEventListener('DOMContentLoaded', () => {
-    // Load custom CSS
+window.addEventListener('DOMContentLoaded', async () => {
+    // Load custom CSS via IPC (secure pattern - no direct fs access in preload)
     try {
-        const cssPath = path.join(__dirname, '..', 'styles', 'custom.css');
-        if (fs.existsSync(cssPath)) {
-            const customCSS = fs.readFileSync(cssPath, 'utf-8');
+        const customCSS = await ipcRenderer.invoke('get-custom-css');
+        if (customCSS) {
             const style = document.createElement('style');
             style.textContent = customCSS;
             document.head.appendChild(style);
