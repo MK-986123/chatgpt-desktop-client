@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { app, BrowserWindow, shell, screen, session, Menu, dialog, nativeTheme, Tray, Notification } from 'electron';
+import { app, BrowserWindow, shell, screen, session, Menu, dialog, nativeTheme, Tray, Notification, ipcMain } from 'electron';
 import path from 'path';
 import { config } from './config/index.js'; // Import platform-specific user agent
 import { fileURLToPath } from 'url';
@@ -16,6 +16,20 @@ let tray = null; // System tray
 
 // Disable hardware acceleration to fix V-Sync issues (should be called before app is ready)
 app.disableHardwareAcceleration();
+
+// IPC handler for getting custom CSS content
+ipcMain.handle('get-custom-css', async () => {
+    try {
+        const cssPath = path.join(__dirname, 'styles', 'custom.css');
+        if (fs.existsSync(cssPath)) {
+            return fs.readFileSync(cssPath, 'utf-8');
+        }
+        return '';
+    } catch (error) {
+        console.warn('Could not load custom CSS:', error);
+        return '';
+    }
+});
 
 /**
  * Loads saved window state and ensures it is within available screen bounds.
@@ -93,12 +107,25 @@ function getCenteredWindowState(width, height, bounds = screen.getPrimaryDisplay
 function onNewWindow(details) {
     const { url } = details;
     
-    // Allow OAuth flows for OpenAI and Google within the app
+    // Allow OAuth flows for OpenAI and Google within the app with specific configuration
     if (url.includes('accounts.google.com') || 
         url.includes('chat.openai.com/auth') || 
         url.includes('auth0.openai.com') ||
         url.includes('openai.com/api/auth')) {
-        return { action: 'allow' };
+        return { 
+            action: 'allow',
+            overrideBrowserWindowOptions: {
+                webPreferences: {
+                    partition: 'persist:chatgpt-session', // Share session with main window
+                    contextIsolation: true,
+                    nodeIntegration: false,
+                    sandbox: false, // Disable sandbox only for OAuth popup
+                    webSecurity: true,
+                    allowRunningInsecureContent: false
+                    // Omit preload for security - OAuth popups don't need extra APIs
+                }
+            }
+        };
     }
     
     // Open other external links in default browser
@@ -125,7 +152,7 @@ function createWindow() {
             nodeIntegration: false,  // Security best practice
             contextIsolation: true,
             partition: 'persist:chatgpt-session', // Ensures cookies & session persist
-            sandbox: false, // Disable sandbox for OAuth to work properly
+            sandbox: true, // Restore secure sandbox behavior for main window
             preload: path.join(__dirname, 'config', 'preload.js'),
             webSecurity: true,
             allowRunningInsecureContent: false
